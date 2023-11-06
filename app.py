@@ -18,7 +18,7 @@ def get_swimmers_names():
     NAMES = my_utils.getNames(FOLDER)
     SORTED_NAMES = sorted(NAMES)
     return render_template(
-        "select.html",
+        "selectSwimmer.html",
         title = "Select a swimmer to chart",
         data = SORTED_NAMES,
     )
@@ -32,7 +32,7 @@ def list_swimmer_events(): # get all events from a swimmer
         #if name in filename:
         swimmers_event.add(event)
     return render_template(
-        "select.html",
+        "selectEvent.html",
         title="Select a swimmers event to chart",
         data = swimmers_event,
     )
