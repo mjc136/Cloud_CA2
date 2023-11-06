@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+
+    {% block body %}
+   
+        {% for c, t in data %}
+
+            <svg height="30" width="400">
+                <rect height="30" width="{{ c }}" style="fill:rgb(0,0,255);" />
+            </svg>{{ t }}<br />
+        
+        {% endfor %}
+
+        <p>Average time: {{ average }}</p>
+    {% endblock %}
