@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request  # from module import Class.
+from flask import Flask, render_template, request, session  # from module import Class.
 
 
 import os 
@@ -10,13 +10,14 @@ import my_utils
 FOLDER = r"swimdata/"
 
 app = Flask(__name__)
-
+app.secret_key = "AaronDoyleIsSmelly"
 
 @app.get("/")
 @app.get("/getswimmers")
 def get_swimmers_names():
     NAMES = my_utils.getNames(FOLDER)
     SORTED_NAMES = sorted(NAMES)
+    
     return render_template(
         "selectSwimmer.html",
         title = "Select a swimmer to chart",
@@ -25,30 +26,42 @@ def get_swimmers_names():
 
 @app.post("/displayevents")
 def list_swimmer_events(): # get all events from a swimmer
+    session['SwimmerName'] = request.form["swimmer"] # get result of select swimmer
     swimmers_event = set()
+
     for filename in os.listdir(FOLDER):
         result = swim_utils.get_swimmers_data(filename)
         event = result[2] + " " + result[3]
-        #if name in filename:
-        swimmers_event.add(event)
+
+        if session['SwimmerName'] == result[0]:
+            swimmers_event.add(event)
+
     return render_template(
         "selectEvent.html",
         title="Select a swimmers event to chart",
         data = swimmers_event,
     )
-    
 
-@app.get("/chart")
+@app.post("/chart")
 def display_chart():
-    (
-        name,
-        age,
-        distance,
-        stroke,
-        the_times,
-        converts,
-        the_average,
-    ) = swim_utils.get_swimmers_data("Darius-13-100m-Fly.txt")
+
+    event = request.form["event"]
+    event = event.split(" ")
+    event = event[0] + "-" + event[1]
+
+    for filename in os.listdir(FOLDER):
+        result = swim_utils.get_swimmers_data(filename)    
+
+        if session['SwimmerName'] == result[0] and session['SwimmerName'] + "-" and event in filename:
+            (
+                name,
+                age,
+                distance, 
+                stroke,
+                the_times,
+                converts,
+                the_average,
+            ) = swim_utils.get_swimmers_data(f"{session['SwimmerName']}-{result[1]}-{result[2]}-{result[3]}.txt")
 
     the_title = f"{name} (Under {age}) {distance} {stroke}"
     from_max = max(converts) + 50
@@ -62,10 +75,6 @@ def display_chart():
         average=the_average,
         data=the_data,
     )
-
-
-
-
 
 
 if __name__ == "__main__":
