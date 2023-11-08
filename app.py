@@ -10,13 +10,13 @@ import my_utils
 FOLDER = r"swimdata/"
 
 app = Flask(__name__)
-app.secret_key = "AaronDoyleIsSmelly"
+app.secret_key = "SecretKey"
 
 @app.get("/")
 @app.get("/getswimmers")
 def get_swimmers_names():
-    NAMES = my_utils.getNames(FOLDER)
-    SORTED_NAMES = sorted(NAMES)
+    NAMES = my_utils.getNames(FOLDER) # List all names in the folder
+    SORTED_NAMES = sorted(NAMES) # sort names alphabetically
     
     return render_template(
         "selectSwimmer.html",
@@ -31,7 +31,7 @@ def list_swimmer_events(): # get all events from a swimmer
 
     for filename in os.listdir(FOLDER):
         result = swim_utils.get_swimmers_data(filename)
-        event = result[2] + " " + result[3]
+        event = result[2] + " " + result[3] # split event and stroke
 
         if session['SwimmerName'] == result[0]:
             swimmers_event.add(event)
@@ -45,9 +45,9 @@ def list_swimmer_events(): # get all events from a swimmer
 @app.post("/chart")
 def display_chart():
 
-    event = request.form["event"]
+    event = request.form["event"] # get result of select event
     event = event.split(" ")
-    event = event[0] + "-" + event[1]
+    event = event[0] + "-" + event[1] # format event to match filename
 
     for filename in os.listdir(FOLDER):
         result = swim_utils.get_swimmers_data(filename)    
